@@ -279,3 +279,65 @@ Route::post('/travel_shuttle/create', function (Request $request) {
     }
     return redirect()->route('travel_shuttle.home')->with('status', $status)->with('message', $result);
 })->name('travel_shuttle.insert');
+
+// Keberangkatan Shuttle
+
+Route::get('/keberangkatan_shuttle', function () {
+    $query = DB::select("SELECT * FROM keberangkatan_shuttle;");
+    return view('keberangkatan_shuttle', ['resultSet' => $query]);
+})->name('keberangkatan_shuttle.home');
+
+Route::post('/keberangkatan_shuttle/create', function (Request $request) {
+    $result = 'Data gagal ditambahkan';
+    $status = 'danger';
+    if(DB::insert("INSERT INTO keberangkatan_shuttle (id_travel_shuttle, waktu_berangkat, perkiraan_tiba, hari_berangkat, status_berangkat) 
+        VALUES (:id_travel_shuttle, :waktu_berangkat, :perkiraan_tiba, :hari_berangkat, :status_berangkat);", 
+    [
+        'id_travel_shuttle' => $request->input('id_travel_shuttle'),
+        'waktu_berangkat' => $request->input('waktu_berangkat'),
+        'perkiraan_tiba' => $request->input('perkiraan_tiba'),
+        'hari_berangkat' => $request->input('hari_berangkat'),
+        'status_berangkat' => $request->input('status_berangkat'),
+    ])) {
+        $result = 'Data berhasil ditambahkan';
+        $status = 'success';
+    }
+    return redirect()->route('keberangkatan_shuttle.home')->with('status', $status)->with('message', $result);
+})->name('keberangkatan_shuttle.insert');
+
+Route::get('/keberangkatan_shuttle/edit/{id}', function ($id) {
+    $query = DB::selectOne("SELECT * FROM keberangkatan_shuttle WHERE id_keberangkatan=$id");
+    return view('keberangkatan_shuttle.edit', ['result' => $query]);
+})->name('keberangkatan_shuttle.edit.form');
+
+Route::post('/keberangkatan_shuttle/edit/{id}', function (Request $request, $id) {
+    $result = 'Tidak ada data yang diubah';
+    $status = 'danger';
+
+    if ($id != $request->input('id_keberangkatan'))
+        return redirect()->route('keberangkatan_shuttle.home')->with('status', $status)->with('message', 'Terjadi kesalahan, silahkan ulangi');
+
+    if(DB::update("UPDATE keberangkatan_shuttle SET id_travel_shuttle=:id_travel_shuttle, waktu_berangkat=:waktu_berangkat, 
+    perkiraan_tiba=:perkiraan_tiba, hari_berangkat=:hari_berangkat, status_berangkat=:status_berangkat WHERE id_keberangkatan=$id", 
+    [
+        'id_travel_shuttle' => $request->input('id_travel_shuttle'),
+        'waktu_berangkat' => $request->input('waktu_berangkat'),
+        'perkiraan_tiba' => $request->input('perkiraan_tiba'), 
+        'hari_berangkat' => $request->input('hari_berangkat'), 
+        'status_berangkat' => $request->input('status_berangkat')
+    ]) > 0) {
+        $result = 'Data berhasil diubah';
+        $status = 'success';
+    }
+    return redirect()->route('keberangkatan_shuttle.home')->with('status', $status)->with('message', $result);
+})->name('keberangkatan_shuttle.edit');
+
+Route::post('/keberangkatan_shuttle/delete', function (Request $request) {
+    $result = 'Data gagal dihapus';
+    $status = 'danger';
+    if(DB::delete("DELETE FROM keberangkatan_shuttle WHERE id_keberangkatan=:id", ['id' => $request->input('id_keberangkatan')])) {
+        $result = 'Data berhasil dihapus';
+        $status = 'success';
+    }
+    return redirect()->route('keberangkatan_shuttle.home')->with('status', $status)->with('message', $result);
+})->name('keberangkatan_shuttle.delete');

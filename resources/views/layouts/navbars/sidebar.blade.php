@@ -73,6 +73,16 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="{{ route('keberangkatan_shuttle.home')}}">
+                                    {{ __('Keberangkatan Shuttle') }}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="">
+                                    {{ __('Tab 3') }}
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="">
                                     {{ __('Tab 4') }}
                                 </a>
