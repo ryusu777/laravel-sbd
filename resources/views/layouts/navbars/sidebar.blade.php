@@ -68,8 +68,8 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="">
-                                    {{ __('Tab 3') }}
+                                <a class="nav-link" href="{{ route ('travel_shuttle.home')}}">
+                                    {{ __('Travel Shuttle') }}
                                 </a>
                             </li>
                             <li class="nav-item">
