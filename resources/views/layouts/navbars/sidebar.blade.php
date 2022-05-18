@@ -58,13 +58,28 @@
                     <div class="collapse show" id="travel">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a class="nav-link" href="">
-                                    {{ __('Tab 1') }}
+                                <a class="nav-link" href="{{ route('kota.home')}}">
+                                    {{ __('Kota') }}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('shuttle.home')}}">
+                                    {{ __('Shuttle') }}
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="">
-                                    {{ __('Tab 2') }}
+                                    {{ __('Tab 3') }}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="">
+                                    {{ __('Tab 4') }}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="">
+                                    {{ __('Tab 5') }}
                                 </a>
                             </li>
                         </ul>
