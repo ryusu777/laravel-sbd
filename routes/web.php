@@ -170,6 +170,8 @@ Route::post('/shuttle/delete', function (Request $request) {
     return redirect()->route('shuttle.home')->with('status', $status)->with('message', $result);
 })->name('shuttle.delete');
 
+// Titik Shuttle
+
 Route::get('/titik_shuttle/edit/{id}', function ($id) {
     $query = DB::selectOne("SELECT * FROM titik_shuttle WHERE id_titik_shuttle=$id");
     return view('titik_shuttle.edit', ['result' => $query]);
@@ -216,3 +218,64 @@ Route::post('/titik_shuttle/create', function (Request $request) {
     }
     return redirect()->route('kota.edit.form', ['id' => $request->input('id_kota')])->with('status', $status)->with('message', $result);
 })->name('titik_shuttle.insert');
+
+// Travel Shuttle
+
+Route::get('/travel_shuttle', function () {
+    $query = DB::select("SELECT * FROM travel_shuttle;");
+    return view('travel_shuttle', ['resultSet' => $query]);
+})->name('travel_shuttle.home');
+
+Route::get('/travel_shuttle/edit/{id}', function ($id) {
+    $query = DB::selectOne("SELECT * FROM travel_shuttle WHERE id_travel_shuttle=$id");
+    return view('travel_shuttle.edit', ['result' => $query]);
+})->name('travel_shuttle.edit.form');
+
+Route::post('/travel_shuttle/edit/{id}', function (Request $request, $id) {
+    $result = 'Tidak ada data yang diubah';
+    $status = 'danger';
+
+    if ($id != $request->input('id_travel_shuttle'))
+        return redirect()->route('travel_shuttle.home')->with('status', $status)->with('message', 'Terjadi kesalahan, silahkan ulangi');
+
+    if(DB::update("UPDATE travel_shuttle SET id_titik_shuttle_berangkat=:id_titik_shuttle_berangkat, id_titik_shuttle_tujuan=:id_titik_shuttle_tujuan, 
+    id_shuttle=:id_shuttle, harga_travel=:harga_travel  WHERE id_travel_shuttle=:id", 
+        [
+            'id_titik_shuttle_berangkat' => $request->id_titik_shuttle_berangkat, 
+            'id_titik_shuttle_tujuan' => $request->id_titik_shuttle_tujuan,
+            'id_shuttle' => $request->id_shuttle,
+            'harga_travel' => $request->harga_travel,
+            'id' => $request->id_travel_shuttle
+        ]) > 0) {
+        $result = 'Data berhasil diubah';
+        $status = 'success';
+    }
+    return redirect()->route('travel_shuttle.home')->with('status', $status)->with('message', $result);
+})->name('travel_shuttle.edit');
+
+Route::post('/travel_shuttle/delete', function (Request $request) {
+    $result = 'Data gagal dihapus';
+    $status = 'danger';
+    if(DB::delete("DELETE FROM travel_shuttle WHERE id_travel_shuttle=:id", ['id' => $request->input('id_travel_shuttle')])) {
+        $result = 'Data berhasil dihapus';
+        $status = 'success';
+    }
+    return redirect()->route('travel_shuttle.home')->with('status', $status)->with('message', $result);
+})->name('travel_shuttle.delete');
+
+Route::post('/travel_shuttle/create', function (Request $request) {
+    $result = 'Data gagal ditambahkan';
+    $status = 'danger';
+    if(DB::insert("INSERT INTO travel_shuttle (id_titik_shuttle_berangkat, id_titik_shuttle_tujuan, id_shuttle, harga_travel)
+    VALUES (:id_titik_shuttle_berangkat, :id_titik_shuttle_tujuan, :id_shuttle, :harga_travel);", 
+        [
+            'id_titik_shuttle_berangkat' => $request->input('id_titik_shuttle_berangkat'), 
+            'id_titik_shuttle_tujuan' => $request->input('id_titik_shuttle_tujuan'),
+            'id_shuttle' => $request->input('id_shuttle'),
+            'harga_travel' => $request->input('harga_travel')
+        ])) {
+        $result = 'Data berhasil ditambahkan';
+        $status = 'success';
+    }
+    return redirect()->route('travel_shuttle.home')->with('status', $status)->with('message', $result);
+})->name('travel_shuttle.insert');
