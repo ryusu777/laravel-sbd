@@ -4,10 +4,6 @@
     <div class="container-fluid">
         <div class="table-responsive">
             <div class="mt-7">
-                <h1>Daftar Travel</h1>
-                <a href="{{ route('travel_shuttle.pilih.kota.form') }}">
-                    <button class="btn btn-primary">Tambah</button>
-                </a>
             </div>
             @if (session('status'))
                 <div class="alert alert-{{ session('status') }} mt-2">
@@ -18,10 +14,7 @@
                 <thead class="thead-light">
                     <tr>
                         <th scope="col">No</th>
-                        <th scope="col">Titik Keberangkatan</th>
-                        <th scope="col">Titik Tujuan</th>
-                        <th scope="col">Shuttle</th>
-                        <th scope="col">Harga Shuttle</th>
+                        <th scope="col">No Order</th>
                         <th scope="col">Aksi</th>
                     </tr>
                 </thead>
@@ -29,12 +22,9 @@
                     @for($i = 0; $i < count($resultSet); $i++)
                         <tr>
                             <td>{{ $i + 1 }}</td>
-                            <td>{{ $resultSet[$i]->id_titik_shuttle_berangkat }}</td>
-                            <td>{{ $resultSet[$i]->id_titik_shuttle_tujuan }}</td>
-                            <td>{{ $resultSet[$i]->id_shuttle }}</td>
-                            <td>{{ $resultSet[$i]->harga_travel }}</td>
+                            <td>{{ $resultSet[$i]->id_order }}</td>
                             <td>
-                                <a href="{{ route('travel_shuttle.edit.form', ['id' => $resultSet[$i]->id_travel_shuttle]) }}">
+                                <a href="{{ route('order_shuttle.edit.form', ['id' => $resultSet[$i]->id_order]) }}">
                                     <button type="button" class="btn btn-primary">
                                         Edit
                                     </button>

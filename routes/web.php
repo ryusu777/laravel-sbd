@@ -4,6 +4,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -226,9 +227,48 @@ Route::get('/travel_shuttle', function () {
     return view('travel_shuttle', ['resultSet' => $query]);
 })->name('travel_shuttle.home');
 
+Route::get('/travel_shuttle/pilih/kota', function () {
+    $query = DB::select("SELECT * FROM kota;");
+    return view('travel_shuttle.pilih_kota', ['result_kota' => $query]);
+})->name('travel_shuttle.pilih.kota.form');
+
+Route::post('/travel_shuttle/pilih/titik', function (Request $request) {
+    $result_berangkat = DB::select("SELECT * FROM titik_shuttle WHERE id_kota=:id", ['id' => $request->input('id_kota_berangkat')]);
+    $result_tujuan = DB::select("SELECT * FROM titik_shuttle WHERE id_kota=:id", ['id' => $request->input('id_kota_tujuan')]);
+    $result_shuttle = DB::select("SELECT * FROM shuttle;");
+    return view('travel_shuttle.create', [
+        'result_berangkat' => $result_berangkat,
+        'result_tujuan' => $result_tujuan,
+        'result_shuttle' => $result_shuttle,
+        'id_titik_shuttle_berangkat' => $request->input('id_titik_shuttle_berangkat'),
+        'id_titik_shuttle_tujuan' => $request->input('id_titik_shuttle_tujuan'),
+        'id_shuttle' => $request->input('id_shuttle'),
+        'id_travel_shuttle' => $request->input('id_travel_shuttle'),
+        'harga_travel' => $request->input('harga_travel'),
+        'route' => $request->input('route')
+    ]);
+})->name('travel_shuttle.pilih.titik.form');
+
 Route::get('/travel_shuttle/edit/{id}', function ($id) {
-    $query = DB::selectOne("SELECT * FROM travel_shuttle WHERE id_travel_shuttle=$id");
-    return view('travel_shuttle.edit', ['result' => $query]);
+    $result_travel_shuttle = DB::selectOne("SELECT * FROM travel_shuttle WHERE id_travel_shuttle=$id");
+    $result_titik_berangkat = DB::selectOne("SELECT * FROM titik_shuttle WHERE id_titik_shuttle=:id", [
+        'id' => $result_travel_shuttle->id_titik_shuttle_berangkat
+    ]);
+    $result_titik_tujuan = DB::selectOne("SELECT * FROM titik_shuttle WHERE id_titik_shuttle=:id", [
+        'id' => $result_travel_shuttle->id_titik_shuttle_tujuan
+    ]);
+    $result_kota = DB::select("SELECT * FROM kota;");
+    return view('travel_shuttle.pilih_kota', [
+        'result_kota' => $result_kota,
+        'id_kota_berangkat' => $result_titik_berangkat->id_kota,
+        'id_kota_tujuan' => $result_titik_tujuan->id_kota,
+        'id_titik_shuttle_berangkat' => $result_titik_berangkat->id_titik_shuttle,
+        'id_titik_shuttle_tujuan' => $result_titik_tujuan->id_titik_shuttle,
+        'id_shuttle' => $result_travel_shuttle->id_shuttle,
+        'id_travel_shuttle' => $id,
+        'harga_travel' => $result_travel_shuttle->harga_travel,
+        'route' => route('travel_shuttle.edit', ['id' => $id])
+    ]);
 })->name('travel_shuttle.edit.form');
 
 Route::post('/travel_shuttle/edit/{id}', function (Request $request, $id) {
@@ -341,3 +381,37 @@ Route::post('/keberangkatan_shuttle/delete', function (Request $request) {
     }
     return redirect()->route('keberangkatan_shuttle.home')->with('status', $status)->with('message', $result);
 })->name('keberangkatan_shuttle.delete');
+
+
+Route::get('/order_shuttle/edit/{id}', function ($id) {
+    $query = DB::selectOne("SELECT * FROM order_shuttle WHERE id_order=$id");
+    return view('order_shuttle.edit', ['result' => $query]);
+})->name('order_shuttle.edit.form');
+
+Route::post('/order_shuttle/delete', function (Request $request) {
+    $result = 'Data gagal dihapus';
+    $status = 'danger';
+    try {
+        if(DB::delete("DELETE FROM order_shuttle WHERE id_order=:id", ['id' => $request->input('id_order')])) {
+            $result = 'Data berhasil dihapus';
+            $status = 'success';
+        }
+    } catch (QueryException $e) {
+        $result = 'Data tidak bisa dihapus';
+    }
+    // TODO: redirection
+    return redirect()->route('kota.home')->with('status', $status)->with('message', $result);
+})->name('order_shuttle.delete');
+
+Route::post('/order_shuttle/create', function (Request $request) {
+    $result = 'Data gagal ditambahkan';
+    $status = 'danger';
+    if(DB::insert("INSERT INTO order_shuttle (id_order, id_travel_shuttle) VALUES (:id_order, :id_travel_shuttle);", [
+        'id_order' => Str::random(15), 
+        'id_travel_shuttle' => $request->input('id_travel_shuttle')
+    ])) {
+        $result = 'Data berhasil ditambahkan';
+        $status = 'success';
+    }
+    return redirect()->route('kota.home')->with('status', $status)->with('message', $result);
+})->name('order_shuttle.insert');
