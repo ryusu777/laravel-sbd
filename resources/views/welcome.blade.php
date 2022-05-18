@@ -18,14 +18,4 @@
         </div>
     </div>
 
-    <div class="container mt--10 pb-5">
-        <button class="btn btn-primary" type="button">Button</button>
-        <button class="btn btn-icon btn-3 btn-primary" type="button">
-            <span class="btn-inner--icon"><i class="ni ni-bag-17"></i></span>
-            <span class="btn-inner--text">With icon</span>
-        </button>
-        <button class="btn btn-icon btn-2 btn-primary" type="button">
-            <span class="btn-inner--icon"><i class="ni ni-atom"></i></span>
-        </button>
-    </div>
 @endsection

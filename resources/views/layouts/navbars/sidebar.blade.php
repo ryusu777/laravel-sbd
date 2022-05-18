@@ -40,11 +40,6 @@
             <!-- Navigation -->
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('home') }}">
-                        <i class="ni ni-tv-2 text-primary"></i> {{ __('Dashboard') }}
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="{{ route('karyawan') }}">
                         <i class="ni ni-tv-2 text-primary"></i> {{ __('Karyawan') }}
                     </a>
@@ -75,21 +70,6 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('keberangkatan_shuttle.home')}}">
                                     {{ __('Keberangkatan Shuttle') }}
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="">
-                                    {{ __('Tab 3') }}
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="">
-                                    {{ __('Tab 4') }}
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="">
-                                    {{ __('Tab 5') }}
                                 </a>
                             </li>
                         </ul>
