@@ -4,6 +4,7 @@
     <div class="container-fluid">
         <div class="table-responsive">
             <div class="mt-7">
+                <h1>Daftar kota</h1>
                 @include('kota.create')
             </div>
             @if (session('status'))

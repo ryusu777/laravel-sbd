@@ -79,13 +79,14 @@ Route::get('/kota', function () {
     return view('kota', ['resultSet' => $query]);
 })->name('kota.home');
 
-Route::get('/kota/{id}', function ($id) {
+Route::get('/kota/edit/{id}', function ($id) {
     $query = DB::selectOne("SELECT * FROM kota WHERE id_kota=$id");
-    return view('kota.edit', ['result' => $query]);
+    $titikShuttleQuery = DB::select("SELECT * FROM titik_shuttle WHERE id_kota=$id");
+    return view('kota.edit', ['result' => $query, 'result_titik_shuttle' => $titikShuttleQuery]);
 })->name('kota.edit.form');
 
 Route::post('/kota/edit/{id}', function (Request $request, $id) {
-    $result = 'Data gagal diubah';
+    $result = 'Tidak ada data yang berubah';
     $status = 'danger';
 
     if ($id != $request->input('id_kota'))
@@ -135,13 +136,13 @@ Route::post('/shuttle/create', function (Request $request) {
     return redirect()->route('shuttle.home')->with('status', $status)->with('message', $result);
 })->name('shuttle.insert');
 
-Route::get('/shuttle/{id}', function ($id) {
+Route::get('/shuttle/edit/{id}', function ($id) {
     $query = DB::selectOne("SELECT * FROM shuttle WHERE id_shuttle=$id");
     return view('shuttle.edit', ['result' => $query]);
 })->name('shuttle.edit.form');
 
 Route::post('/shuttle/edit/{id}', function (Request $request, $id) {
-    $result = 'Data gagal diubah';
+    $result = 'Tidak ada data yang diubah';
     $status = 'danger';
 
     if ($id != $request->input('id_shuttle'))
@@ -163,3 +164,50 @@ Route::post('/shuttle/delete', function (Request $request) {
     }
     return redirect()->route('shuttle.home')->with('status', $status)->with('message', $result);
 })->name('shuttle.delete');
+
+Route::get('/titik_shuttle/edit/{id}', function ($id) {
+    $query = DB::selectOne("SELECT * FROM titik_shuttle WHERE id_titik_shuttle=$id");
+    return view('titik_shuttle.edit', ['result' => $query]);
+})->name('titik_shuttle.edit.form');
+
+Route::post('/titik_shuttle/edit/{id}', function (Request $request, $id) {
+    $result = 'Tidak ada data yang diubah';
+    $status = 'danger';
+
+    if ($id != $request->input('id_titik_shuttle'))
+        return redirect()->route('titik_shuttle.home')->with('status', $status)->with('message', 'Terjadi kesalahan, silahkan ulangi');
+
+    if(DB::update("UPDATE titik_shuttle SET nama_titik_shuttle=:nama_titik_shuttle WHERE id_titik_shuttle=:id", 
+        [
+            'nama_titik_shuttle' => $request->nama_titik_shuttle, 
+            'id' => $request->id_titik_shuttle
+        ]) > 0) {
+        $result = 'Data berhasil diubah';
+        $status = 'success';
+    }
+    return redirect()->route('kota.edit.form', ['id' => $request->input('id_kota')])->with('status', $status)->with('message', $result);
+})->name('titik_shuttle.edit');
+
+Route::post('/titik_shuttle/delete', function (Request $request) {
+    $result = 'Data gagal dihapus';
+    $status = 'danger';
+    if(DB::delete("DELETE FROM titik_shuttle WHERE id_titik_shuttle=:id", ['id' => $request->input('id_kota')])) {
+        $result = 'Data berhasil dihapus';
+        $status = 'success';
+    }
+    return redirect()->route('kota.edit.form', ['id' => $request->input('id_kota')])->with('status', $status)->with('message', $result);
+})->name('titik_shuttle.delete');
+
+Route::post('/titik_shuttle/create', function (Request $request) {
+    $result = 'Data gagal ditambahkan';
+    $status = 'danger';
+    if(DB::insert("INSERT INTO titik_shuttle (nama_titik_shuttle, id_kota) VALUES (:nama_titik_shuttle, :id_kota);", 
+        [
+            'nama_titik_shuttle' => $request->input('nama_titik_shuttle'),
+            'id_kota' => $request->input('id_kota')
+        ])) {
+        $result = 'Data berhasil ditambahkan';
+        $status = 'success';
+    }
+    return redirect()->route('kota.edit.form', ['id' => $request->input('id_kota')])->with('status', $status)->with('message', $result);
+})->name('titik_shuttle.insert');
