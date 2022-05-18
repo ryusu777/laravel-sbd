@@ -1,4 +1,4 @@
-@extends('component.modal', ['modal_title' => 'Hapus shuttle', 'button_label' => 'Hapus', 'btn_danger' => true])
+@extends('component.modal', ['modal_title' => 'Hapus shuttle', 'button_label' => 'Hapus', 'btn_danger' => true, 'modal_id' => 'create_shuttle_modal'])
 @section('modal.body')
     <form action="{{ route('shuttle.delete') }}" method="POST">
         <input type="hidden" name="id_shuttle" value="{{ $id_shuttle }}">
