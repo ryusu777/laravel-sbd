@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -102,9 +103,13 @@ Route::post('/kota/edit/{id}', function (Request $request, $id) {
 Route::post('/kota/delete', function (Request $request) {
     $result = 'Data gagal dihapus';
     $status = 'danger';
-    if(DB::delete("DELETE FROM kota WHERE id_kota=:id", ['id' => $request->input('id_kota')])) {
-        $result = 'Data berhasil dihapus';
-        $status = 'success';
+    try {
+        if(DB::delete("DELETE FROM kota WHERE id_kota=:id", ['id' => $request->input('id_kota')])) {
+            $result = 'Data berhasil dihapus';
+            $status = 'success';
+        }
+    } catch (QueryException $e) {
+        $result = 'Data tidak bisa dihapus';
     }
     return redirect()->route('kota.home')->with('status', $status)->with('message', $result);
 })->name('kota.delete');
